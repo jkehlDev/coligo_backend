@@ -17,7 +17,12 @@ COLIGO is a platform for research and referencing of new projects
 
   and replace key.pem with newkey.pem.
 
+  Create Diffie–Hellman Strong(er) Parameters : 
+
+        openssl dhparam -out /var/www/example/sslcert/dh-strong.pem 2048
+
 5. Run command line :
 
         yarn
         yarn start
+
