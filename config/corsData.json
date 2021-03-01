@@ -1,0 +1,7 @@
+{
+  "origin": "*",
+  "methods": "GET, POST",
+  "credentials": true,
+  "allowedHeaders": "Content-Type, Authorization",
+  "optionsSuccessStatus": 204
+}
