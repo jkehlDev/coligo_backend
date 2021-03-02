@@ -1,7 +1,6 @@
-// Import Redis module
 const redis = require('redis');
 
-// START REDIS CLIENT CONNEXION - Mangae connexion error case.
+// START REDIS CLIENT connection  - Manage connection  error case.
 const client = redis.createClient({
   retry_strategy: function (options) {
     if (options.error && options.error.code === 'ECONNREFUSED') {
@@ -24,9 +23,12 @@ const client = redis.createClient({
     return Math.min(options.attempt * 100, 3000);
   },
 });
-
+// GENRIC KEY PREFIX
 const GENERIC_PREFIX = 'GENDATA';
 
+/**
+ * @module redisClient This provide a tiny redis client for CRUD operations.
+ */
 const redisCli = {
   /**
    * @function set Set a new pair (key, value) in redis store with expiration time
@@ -129,7 +131,7 @@ const redisCli = {
     }),
 
   /**
-   *  @function close Close client connexion to redis database
+   *  @function close Close client connection  to redis database
    */
   close: () => {
     client.end(true);

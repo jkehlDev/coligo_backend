@@ -4,7 +4,7 @@ const userOnlineDuration =
   parseInt(process.env.USER_ONLINE_DURATION, 10) || 86400;
 const redisClient = require('../dataBase/redisClient');
 const TOKEN_REDIS_PREFIX = 'TOKENBLKLST';
-const USER_ONLINE = 'USERONLINE';
+const AUTH_REDIS_PREFIX = 'USERONLINE';
 
 /**
  * @module manageAuthentification this manage user authentification into application
@@ -105,14 +105,14 @@ const manageAuthentification = {
   setUserOnLine: (_, response, next) => {
     const userId = response.locals.userId;
     const setCache = (userId) => {
-      return redisClient.set(userOnlineDuration, userId, userId, USER_ONLINE); // ADD NEW ENTRY
+      return redisClient.set(userOnlineDuration, userId, userId, AUTH_REDIS_PREFIX); // ADD NEW ENTRY
     };
     const removeCache = (userId) => {
-      return redisClient.delete(userId, USER_ONLINE); // REMOVE EXISTING ENTRY
+      return redisClient.delete(userId, AUTH_REDIS_PREFIX); // REMOVE EXISTING ENTRY
     };
     try {
       redisClient
-        .has(userId, USER_ONLINE) // Check if user is already online state
+        .has(userId, AUTH_REDIS_PREFIX) // Check if user is already online state
         .then((response) => {
           if (response) {
             return removeCache(userId).then(() => setCache(userId)); // If user is already online refresh timed entry
@@ -128,7 +128,7 @@ const manageAuthentification = {
     }
     next();
   },
-  
+
   /**
    * @function setUserOnline Set user offLine state, remove entry in cached user state
    * @param {Express.Request} request
@@ -137,7 +137,7 @@ const manageAuthentification = {
    */
   setUserOffLine: (_, response, next) => {
     try {
-      redisClient.delete(response.locals.userId, USER_ONLINE).catch((error) => {
+      redisClient.delete(response.locals.userId, AUTH_REDIS_PREFIX).catch((error) => {
         throw error;
       });
     } catch (error) {

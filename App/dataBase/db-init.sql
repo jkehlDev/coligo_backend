@@ -1,7 +1,7 @@
 BEGIN;
 
 /* WIPE OUT ALL PRE-EXISTING TABLES */
-DROP TABLE IF EXISTS "USERMSGS", "USERINFO", "USERAUTH", "PRJINFOS", "NDSINFOS";
+DROP TABLE IF EXISTS USERAUTH, USERMSGS, USERINFO, PRJINFOS, NDSINFOS, USERS_FOLLOW_USERS;
 
 /* Define User authentification table */
 CREATE TABLE USERAUTH (
@@ -9,7 +9,7 @@ CREATE TABLE USERAUTH (
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     email TEXT NOT NULL UNIQUE,
-    password TEXT NOT NULL,
+    password TEXT NOT NULL
 );
 
 /* Define User messages table */
@@ -62,7 +62,7 @@ CREATE TABLE USERS_FOLLOW_USERS (
   id_user_from INT REFERENCES USERAUTH(id_auth) ON DELETE CASCADE,
   id_user_to INT REFERENCES USERAUTH(id_auth) ON DELETE CASCADE,
   PRIMARY KEY (id_user_from, id_user_to)
-)
+);
 
 /* INSERT INTO users (name, email, password) VALUES
 ('Michel','michel@michel', crypt('password1', gen_salt('md5'))),

@@ -1,5 +1,6 @@
 require('dotenv').config();
 const redisClient = require('./App/dataBase/redisClient');
+const pgClient = require('./App/dataBase/pgClient');
 
 const express = require('express');
 const app = express();
@@ -66,6 +67,10 @@ function exitHandler(options, exitCode) {
   // ==============================
   // DO SOMETHING HERE TO CLOSE YOUR DB PROPERLY :
   redisClient.close();
+  pgClient
+    .close()
+    .then(() => console.log('client has disconnected'))
+    .catch((err) => console.error('error during disconnection', err.stack));
   // ==============================
   if (options.cleanup) console.log('clean');
   if (exitCode || exitCode === 0) console.log(exitCode);
