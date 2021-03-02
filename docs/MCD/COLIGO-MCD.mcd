@@ -1,0 +1,14 @@
+APPARTIENT, 0N USERAUTH, 01 USERMSGS
+USERMSGS: id_msg, title, content, user_from
+
+SUIT, 0N USERAUTH, 0N USERAUTH
+USERAUTH: id_auth, email, password
+DEFINIT, 01 USERAUTH, 11 USERINFO
+USERINFO: id_info, pseudo, description
+
+POSSEDE, 0N USERAUTH, 11 PRJINFOS
+PRJINFOS: id_project, title, description, id_author, location, state
+CONTIENT, 0N PRJINFOS, 11 NDSINFOS
+NDSINFOS: id_need, id_projet, title, description, state
+
+

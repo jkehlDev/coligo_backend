@@ -25,12 +25,9 @@ const client = redis.createClient({
   },
 });
 
-/**
- * @module redisClient This is redis client implementation, for cahed application data.
- */
-const redisClient = {
-  __GENERIC_PREFIX: 'DATA',
+const GENERIC_PREFIX = 'GENDATA';
 
+const redisCli = {
   /**
    * @function set Set a new pair (key, value) in redis store with expiration time
    * @param {Number} seconds expiration timer duration in seconds
@@ -39,35 +36,35 @@ const redisClient = {
    * @param {String} prefix Prefix key (default 'DATA')
    * @returns {bool} True if new pair is stored, false otherwise
    */
-  set: (seconds, value, key, prefix = redisClient.__GENERIC_PREFIX) => {
+  set: (seconds, value, key, prefix = __GENERIC_PREFIX) => {
     return new Promise((resolve, reject) => {
-      redisClient
-      .hasToken(key)
-      .then((result) => {
-        if (result) {
-          client.setex(`${prefix}#${key}`, seconds, value, (error, state) => {
-            if (error) {
-              reject(error);
-            }
-            resolve(state === 1); // If set resolve then state === 1
-          });
-        } else {
-          resolve(false);
-        }
-      })
-      .catch((error) => {
-        reject(error);
-      });      
+      redisCli
+        .hasToken(key)
+        .then((result) => {
+          if (result) {
+            client.setex(`${prefix}#${key}`, seconds, value, (error, state) => {
+              if (error) {
+                reject(error);
+              }
+              resolve(state === 1); // If set resolve then state === 1
+            });
+          } else {
+            resolve(false);
+          }
+        })
+        .catch((error) => {
+          reject(error);
+        });
     });
   },
 
   /**
    * @function has  Testing if a pair (key, value) exist in redis store by target Key
-   * @param {*} key Target key in store
-   * @param {*} prefix Prefix key (default 'DATA')
+   * @param {String} key Target key in store
+   * @param {String} prefix Prefix key (default 'DATA')
    * @returns {bool} True if pair exist in store, false otherwise
    */
-  has: (key, prefix = redisClient.__GENERIC_PREFIX) =>
+  has: (key, prefix = __GENERIC_PREFIX) =>
     new Promise((resolve, reject) => {
       client.exists(`${prefix}#${key}`, (error, state) => {
         if (error) {
@@ -79,13 +76,13 @@ const redisClient = {
 
   /**
    * @function get Get a value from pair (key, value) in redis store by target key
-   * @param {*} key Target key in store
-   * @param {*} prefix Prefix key (default 'DATA')
+   * @param {String} key Target key in store
+   * @param {String} prefix Prefix key (default 'DATA')
    * @returns {string} Target value if key exist in store, undefine otherwise
    */
-  get: (key, prefix = redisClient.__GENERIC_PREFIX) =>
+  get: (key, prefix = __GENERIC_PREFIX) =>
     new Promise((resolve, reject) => {
-      redisClient
+      redisCli
         .hasToken(key)
         .then((result) => {
           if (result) {
@@ -106,13 +103,13 @@ const redisClient = {
 
   /**
    * @function delete Delete a pair (key, value) in redis store by key
-   * @param {*} key Target key in store
-   * @param {*} prefix Prefix key (default 'DATA')
+   * @param {String} key Target key in store
+   * @param {String} prefix Prefix key (default 'DATA')
    * @returns {bool} True if pair deleted in store, false otherwise
    */
-  delete: (key, prefix = redisClient.__GENERIC_PREFIX) =>
+  delete: (key, prefix = __GENERIC_PREFIX) =>
     new Promise((resolve, reject) => {
-      redisClient
+      redisCli
         .hasToken(key)
         .then((result) => {
           if (result) {
@@ -130,9 +127,13 @@ const redisClient = {
           reject(error);
         });
     }),
+
+  /**
+   *  @function close Close client connexion to redis database
+   */
   close: () => {
     client.end(true);
   },
 };
 
-module.exports = redisClient;
+module.exports = redisCli;

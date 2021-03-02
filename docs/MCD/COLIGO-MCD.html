@@ -1,0 +1,66 @@
+<html>
+<head>
+<meta charset='utf-8'>
+<style>
+  #mld .relation { font-variant: small-caps; font-weight: bold }
+  #mld .primary { text-decoration: underline }
+  #mld .foreign { font-style: oblique }
+  #mld .normal { }
+</style>
+</head>
+<body>
+<div id='mld'>
+<div>
+  <span class='relation'>USERMSGS</span> (
+    <span class='primary'>id_msg</span>,
+    <span class='normal'>title</span>,
+    <span class='normal'>content</span>,
+    <span class='normal'>user_from</span>,
+    <span class='foreign'>id_auth</span>
+  )
+</div>
+<div>
+  <span class='relation'>SUIT</span> (
+    <span class='foreign primary'>id_auth</span>,
+    <span class='foreign primary'>id_auth.1</span>
+  )
+</div>
+<div>
+  <span class='relation'>USERAUTH</span> (
+    <span class='primary'>id_auth</span>,
+    <span class='normal'>email</span>,
+    <span class='normal'>password</span>
+  )
+</div>
+<div>
+  <span class='relation'>USERINFO</span> (
+    <span class='primary'>id_info</span>,
+    <span class='normal'>pseudo</span>,
+    <span class='normal'>description</span>,
+    <span class='foreign'>id_auth</span>
+  )
+</div>
+<div>
+  <span class='relation'>PRJINFOS</span> (
+    <span class='primary'>id_project</span>,
+    <span class='normal'>title</span>,
+    <span class='normal'>description</span>,
+    <span class='normal'>id_author</span>,
+    <span class='normal'>location</span>,
+    <span class='normal'>state</span>,
+    <span class='foreign'>id_auth</span>
+  )
+</div>
+<div>
+  <span class='relation'>NDSINFOS</span> (
+    <span class='primary'>id_need</span>,
+    <span class='normal'>id_projet</span>,
+    <span class='normal'>title</span>,
+    <span class='normal'>description</span>,
+    <span class='normal'>state</span>,
+    <span class='foreign'>id_project</span>
+  )
+</div>
+</div>
+</body>
+</html>
