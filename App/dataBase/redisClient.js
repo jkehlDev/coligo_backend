@@ -38,21 +38,24 @@ const redisCli = {
    * @param {String} prefix Prefix key (default 'DATA')
    * @returns {bool} True if new pair is stored, false otherwise
    */
-  set: (seconds, value, key, prefix = __GENERIC_PREFIX) => {
+  set: (seconds, value, key, prefix = GENERIC_PREFIX) => {
     return new Promise((resolve, reject) => {
       redisCli
-        .hasToken(key)
-        .then((result) => {
-          if (result) {
-            client.setex(`${prefix}#${key}`, seconds, value, (error, state) => {
-              if (error) {
-                reject(error);
-              }
-              resolve(state === 1); // If set resolve then state === 1
-            });
-          } else {
-            resolve(false);
-          }
+        .has(key, prefix)
+        .then((has) => {
+          has
+            ? client.setex(
+                `${prefix}#${key}`,
+                seconds,
+                value,
+                (error, state) => {
+                  if (error) {
+                    reject(error);
+                  }
+                  resolve(state === 1); // If set resolve then state === 1
+                }
+              )
+            : resolve(false);
         })
         .catch((error) => {
           reject(error);
@@ -66,7 +69,7 @@ const redisCli = {
    * @param {String} prefix Prefix key (default 'DATA')
    * @returns {bool} True if pair exist in store, false otherwise
    */
-  has: (key, prefix = __GENERIC_PREFIX) =>
+  has: (key, prefix = GENERIC_PREFIX) =>
     new Promise((resolve, reject) => {
       client.exists(`${prefix}#${key}`, (error, state) => {
         if (error) {
@@ -82,21 +85,19 @@ const redisCli = {
    * @param {String} prefix Prefix key (default 'DATA')
    * @returns {string} Target value if key exist in store, undefine otherwise
    */
-  get: (key, prefix = __GENERIC_PREFIX) =>
+  get: (key, prefix = GENERIC_PREFIX) =>
     new Promise((resolve, reject) => {
       redisCli
-        .hasToken(key)
-        .then((result) => {
-          if (result) {
-            client.get(`${prefix}#${key}`, (error, value) => {
-              if (error) {
-                reject(error);
-              }
-              resolve(value); // Return value
-            });
-          } else {
-            resolve(undefined);
-          }
+        .has(key, prefix)
+        .then((has) => {
+          has
+            ? client.get(`${prefix}#${key}`, (error, value) => {
+                if (error) {
+                  reject(error);
+                }
+                resolve(value); // Return value
+              })
+            : resolve(undefined);
         })
         .catch((error) => {
           reject(error);
@@ -109,21 +110,19 @@ const redisCli = {
    * @param {String} prefix Prefix key (default 'DATA')
    * @returns {bool} True if pair deleted in store, false otherwise
    */
-  delete: (key, prefix = __GENERIC_PREFIX) =>
+  delete: (key, prefix = GENERIC_PREFIX) =>
     new Promise((resolve, reject) => {
       redisCli
-        .hasToken(key)
-        .then((result) => {
-          if (result) {
-            client.del(`${prefix}#${key}`, (error, state) => {
-              if (error) {
-                reject(error);
-              }
-              resolve(state === 1); // If selete resolve then state === 1
-            });
-          } else {
-            resolve(false);
-          }
+        .has(key, prefix)
+        .then((has) => {
+          has
+            ? client.del(`${prefix}#${key}`, (error, state) => {
+                if (error) {
+                  reject(error);
+                }
+                resolve(state === 1); // If selete resolve then state === 1
+              })
+            : resolve(false);
         })
         .catch((error) => {
           reject(error);
