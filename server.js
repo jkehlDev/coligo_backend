@@ -1,5 +1,6 @@
 require('dotenv').config();
 const redisClient = require('./App/dataBase/redisClient');
+const pgClient = require('./App/dataBase/pgClient');
 
 const express = require('express');
 const app = express();
@@ -50,12 +51,14 @@ app.listen(process.env.PORT_HTTP, () => {
 
 const fs = require('fs');
 const options = {
-  key: fs.readFileSync('./stl/key.pem'),
-  cert: fs.readFileSync('./stl/cert.pem'),
-  dhparam: fs.readFileSync('./stl/dh-strong.pem'),
+  key: fs.readFileSync('./tsl/key.pem'),
+  cert: fs.readFileSync('./tsl/cert.pem'),
+  dhparam: fs.readFileSync('./tsl/dh-strong.pem'),
 };
 const https = require('https');
-https.createServer(options, app).listen(process.env.PORT_HTTPS);
+const httpsServer = https
+  .createServer(options, app)
+  .listen(process.env.PORT_HTTPS);
 
 // ==============================================================
 // CLOSING PROCESS CASE - TO CLOSE PROPERLY DATABASE CLIENT CONNEXION
@@ -65,7 +68,18 @@ process.stdin.resume(); //so the program will not close instantly
 function exitHandler(options, exitCode) {
   // ==============================
   // DO SOMETHING HERE TO CLOSE YOUR DB PROPERLY :
+  if (httpsServer.listening) {
+    httpsServer.close((err) => {
+      console.error(err);
+    });
+    console.log('HTTPS WEB SERVER CLOSE.');
+  }
   redisClient.close();
+  pgClient
+    .close()
+    .then(() => console.log('client has disconnected'))
+    .catch((err) => console.error('error during disconnection', err.stack));
+
   // ==============================
   if (options.cleanup) console.log('clean');
   if (exitCode || exitCode === 0) console.log(exitCode);
