@@ -70,7 +70,7 @@ function exitHandler(options, exitCode) {
   // DO SOMETHING HERE TO CLOSE YOUR DB PROPERLY :
   if (httpsServer.listening) {
     httpsServer.close((err) => {
-        console.error(err);
+      console.error(err);
     });
     console.log('HTTPS WEB SERVER CLOSE.');
   }
